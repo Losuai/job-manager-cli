@@ -25,8 +25,8 @@
             </el-form-item>
             <el-form-item class="form-title" label="是否冻结" prop="frozenStatus">
                 <el-radio-group v-model="QuartzTaskInformation.frozenStatus">
-                <el-radio class="form-title" label="冻结"></el-radio>
-                <el-radio class="form-title" label="非冻结"></el-radio>
+                <el-radio class="form-title" label="FROZEN">冻结</el-radio>
+                <el-radio class="form-title" label="UNFROZEN">非冻结</el-radio>
                 </el-radio-group>
             </el-form-item>
             <el-form-item class="form-title" label="任务备注" prop="remark">
@@ -42,6 +42,7 @@
 </template>
 <script>
     import {cron} from 'vue-cron';
+    import Common from '@/common/common.js'
 
   export default {
      components: { cron },
@@ -86,12 +87,48 @@
     },
     methods: {
       submitForm(jobForm) {
-        console.log(this.QuartzTaskInformation)
-        this.$axios.post('/quartz/task/add', this.QuartzTaskInformation).then(function(response){
-          console.log(response);
-        }).catch(function(error){
-          console.log(error);
-        })
+        var self = this;
+        this.$refs[jobForm].validate((valid) => {
+          if (valid) {
+            this.$confirm('此操作将创建新的定时任务, 是否继续?', '提示',{
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'success'
+            }).then(()=>{
+              this.$axios.post('/quartz/task/add', this.QuartzTaskInformation).then(function(response){
+                  if(response.data.code == 200){
+                    self.$message({
+                    type: 'success',
+                    message: '创建成功!'
+                    });
+                    Common.$emit('v', '1')
+                  }else{
+                    self.$message({
+                    type: 'error',
+                    message: '创建失败!'
+                  });
+                  }
+                  
+              }).catch(function(error){
+                console.log(error);
+                self.$message({
+                  type: 'error',
+                  message: '创建失败!'
+                  });
+            })
+            }).catch(()=>{
+              this.$message({
+              type: 'info',
+              message: '已取消创建'
+              });  
+            });
+           
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+       
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();

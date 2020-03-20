@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="aside-nav">
       <div class="menu-top">
         <i class="el-icon-crop"></i>
         <h3>JOB MANAGER</h3>
@@ -14,7 +14,7 @@
           @select="handleSelect"
           text-color="#858d8dde"
           >
-          <el-menu-item  @click="click1" index="/1">
+          <el-menu-item  @click="click1" index="/quartz/main">
             <i class="el-icon-s-home" style="color:#1965f0;"></i>
             <span slot="title" id="nav-1">首页</span>
           </el-menu-item>
@@ -22,27 +22,23 @@
             <i class="el-icon-circle-plus" style="color:#5ac2f4;"></i>
             <span slot="title" id="nav-2">新增任务</span>
           </el-menu-item>
-          <el-menu-item  @click="click3" index="/2-2">
+          <el-menu-item  @click="click3" index="/quartz/task/list">
             <i class="el-icon-s-order" style="color:#10e194;"></i>
             <span slot="title" id="nav-2">任务列表</span>
           </el-menu-item>
-          <el-menu-item  @click="click4" index="/3">
-            <i class="el-icon-s-release" style="color:#e8374f;"></i>
-            <span slot="title" id="nav-2">失败纪录</span>
+          <el-menu-item  @click="click4" index="/quartz/record/list">
+            <i class="el-icon-s-management" style="color:#e8374f;"></i>
+            <span slot="title" id="nav-2">执行纪录</span>
           </el-menu-item>
-          <el-menu-item  @click="click5" index="/4">
+          <el-menu-item  @click="click5" index="/quartz/user">
             <i class="el-icon-user-solid" style="color:#e1b410;"></i>
             <span slot="title" id="nav-2">用户</span>
           </el-menu-item>
-          <el-menu-item  @click="click6" index="/5">
-            <i class="el-icon-s-tools" style="color:#ae10e1;"></i>
-            <span slot="title" id="nav-2">设置</span>
-          </el-menu-item>
-          <el-menu-item  @click="click7" index="/6">
+          <el-menu-item  @click="click7" index="/quartz/user/login">
             <i class="el-icon-key" style="color:#206291;"></i>
             <span slot="title" id="nav-2">登录</span>
           </el-menu-item>
-          <el-menu-item  @click="click8" index="/7">
+          <el-menu-item  @click="click8" index="/quartz/user/register">
             <i class="el-icon-s-custom" style="color:#1dd51a;"></i>
             <span slot="title" id="nav-2">注册</span>
           </el-menu-item>
@@ -74,16 +70,32 @@
       },
       click3: function () {
         Common.$emit('val', "任务列表")
+        this.$axios.get('/quartz/task/find?page=1')
+        .then(function (response) {
+          console.log(response)
+          Common.$emit('Data', response.data.content)
+          Common.$emit('totalElements', response.data.totalElements)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       },
       click4: function () {
-        Common.$emit('val', "失败记录")
+        Common.$emit('val', "执行记录")
+        this.$axios.get('/quartz/record/search?page=1')
+        .then(function (response) {
+          console.log(response)
+          Common.$emit('record', response.data.data.content)
+          Common.$emit('totalElement', response.data.data.totalElements)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       },
       click5: function () {
         Common.$emit('val', "用户")
       },
-      click6: function () {
-        Common.$emit('val', "设置")
-      },
+     
       click7: function () {
         Common.$emit('val', "登录")
       },
@@ -103,7 +115,9 @@
 /* .el-menu{
   	border-right:0;
 } */
-
+.aside-nav{
+  position: fixed;
+}
 .menu-top{
   height: 70px;
   width: 200px;
@@ -116,6 +130,7 @@
 
 .ac{
   margin-top: 20px;  
+  position: fixed;
 }
 
 .el-menu-item{

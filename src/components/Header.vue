@@ -1,10 +1,10 @@
 <template>
     <el-row class="head">
         <div class="head-1"><a class="nav-title" href="">{{name}}</a></div>
-        <el-input  class="head-search"
+        <!-- <el-input  class="head-search"
             placeholder="请输入内容"
             v-model="input">
-        </el-input>
+        </el-input> -->
         
     </el-row>
 </template>
@@ -49,7 +49,7 @@ export default {
     data(){
         return{
             input:'',
-            name: "导航",
+            name: "首页",
         }
     },
      mounted: function () {

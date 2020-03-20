@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import JobsForm from '@/components/JobsForm'
-import Main from '@/components/Main'
-import AddJob from '@/components/AddJob'
+import Job from '@/Job.vue'
+import Record from '@/components/Record'
+import user from '@/view/user'
 Vue.use(Router)
 
 export default new Router({
@@ -11,22 +11,47 @@ export default new Router({
     {
       path: '/',
       name: 'app',
-      component: app,
-    }, 
+      component: user,
+      redirect:'/quartz/user/login',
+      
+    },
     {
-      path: '/1',
-      name: '1',
-      component: Main
+      path: '/',
+      name: 'app',
+      component: Job,
+      children: [
+        {
+          path: '/quartz/main',
+          component:()=> import('../components/Main.vue')
         },
+        {
+          path: '/quartz/task/add',
+          component:()=> import('../components/AddJob.vue')
+        },
+        {
+          path: '/quartz/task/list',
+          component:()=> import('../components/JobsForm.vue')
+        },
+        {
+          path: '/quartz/record/list',
+          component: Record
+        },
+      ]
+    },
     {
-      path: '/quartz/task/add',
-      name: 'add',
-      component: AddJob
+      path:"/quartz/user",
+      component:()=>import('../view/user.vue'),
+      children:[
+        {
+          path: '/quartz/user/login',
+          component:()=>import('../view/login.vue')
         },
-    {
-      path: '/2-2',
-      name: '2-1',
-      component: JobsForm
-        },
+        {
+          path: '/quartz/user/register',
+          component:()=>import('../view/register.vue')
+        }
+      ]
+    },
+
   ]
 })
