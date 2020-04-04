@@ -20,15 +20,15 @@
                     active-text-color="hsla(0,0%,100%,.65)"
                     >
                     <el-menu-item class="header-menu-item" index="/quartz/main">
-                       <i class="el-icon-s-home" style=""></i>
+                       <i class="el-icon-house"></i>
                          <span slot="title">Home</span>
                         </el-menu-item>
                     <el-menu-item class="header-menu-item" index="/quartz/user/login">
-                        <i class="el-icon-key"  style=""></i>
+                        <i class="el-icon-key"></i>
                            <span slot="title"> Login</span>
                         </el-menu-item>
                     <el-menu-item class="header-menu-item" index="/quartz/user/register">
-                        <i class="el-icon-s-custom"  style=""></i>
+                        <i class="el-icon-edit"></i>
                            <span slot="title">Register</span>
                         </el-menu-item>
                     </el-menu>
@@ -53,7 +53,7 @@
             </div>
         </div>
         <el-footer class="footer">
-          <el-col :span="12"><div class="grid-content bg-purple footer-1">© 2020 Job Manager & Binar Code</div></el-col>
+          <el-col :span="12"><div class="grid-content bg-purple footer-1">© 2020 Job Manager & Binary Code</div></el-col>
           <el-col :span="12"><div class="grid-content bg-purple-light footer-2">About Us</div></el-col>
         </el-footer> 
     </el-container>

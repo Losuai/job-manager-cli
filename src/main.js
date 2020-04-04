@@ -21,6 +21,10 @@ Vue.prototype.$axios = Axios;
 //请求头
 Axios.defaults.headers.post['Content-Type'] = 'application/json'; 
 
+
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+
 new Vue({
   router,
   render: h => h(App)

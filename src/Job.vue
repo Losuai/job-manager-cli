@@ -13,7 +13,7 @@
           </el-container>
         </el-main>
         <el-footer class="jobfooter" style="height:100px;">
-          <el-col :span="12"><div class="grid-content bg-purple ">© 2020 Job Manager & Binar Code</div></el-col>
+          <el-col :span="12"><div class="grid-content bg-purple ">© 2020 Job Manager & Binary Code</div></el-col>
           <el-col :span="12"><div class="grid-content bg-purple-light footer-right">About Us</div></el-col>
         </el-footer> 
     </el-container>

@@ -30,7 +30,7 @@
             <i class="el-icon-s-management" style="color:#e8374f;"></i>
             <span slot="title" id="nav-2">执行纪录</span>
           </el-menu-item>
-          <el-menu-item  @click="click5" index="/quartz/user">
+          <el-menu-item  @click="click5" index="/quartz/user/profile">
             <i class="el-icon-user-solid" style="color:#e1b410;"></i>
             <span slot="title" id="nav-2">用户</span>
           </el-menu-item>

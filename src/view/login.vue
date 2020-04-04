@@ -4,33 +4,95 @@
             <i class="el-icon-data-analysis" style="margin-top:15px;color:#43c3c7;"></i>
         </div>
          <el-divider></el-divider>
-        <div class="login-main">
-            <span style="font-size:13px;margin-left:120px;color:#9eacbb;">Sign in with credentials</span>
-            <div class="f-name">
-                <i class="el-icon-user n"></i>
-                 <input class="name" v-model="name" placeholder="Name" type="text">
-            </div>
-            <div class="f-password">
-                <i class="el-icon-key pwd"></i>
-                <input class="password" v-model="password" placeholder="Password" type="password">
-            </div>
-              <el-checkbox class="rm"  v-model="checked">Remember Me</el-checkbox>
-            <el-button class="login-btn" type="primary" size="mini" @click="login">Sign in </el-button>
-        </div>
+        <el-form class="login-main" :model="user" status-icon :rules="rules" ref="user" label-width="30px">
+            <span style="font-size:13px;margin-left:80px;color:#9eacbb;">Sign in with credentials</span>
+            <el-form-item class="f" prop="name">
+                <span slot="label"><i class="el-icon-user" style="margin-left:15px;"></i></span>
+                 <el-input class="v" v-model="user.name" placeholder="Name" ></el-input>
+            </el-form-item>
+            <el-form-item class="f" prop="password">
+                <span slot="label"><i class="el-icon-key" style="margin-left:15px;"></i></span>
+                <el-input class="v" v-model="user.password" placeholder="Password" type="password"></el-input>
+            </el-form-item>
+            <el-form-item  prop="checked">
+              <el-checkbox class="rm"  v-model="user.checked">Remember Me</el-checkbox>
+            </el-form-item>
+            <el-button class="login-btn" type="primary" size="mini" @click="login('user')">Sign in </el-button>
+        </el-form>
     </div>
 </template>
 <script>
 export default {
     data(){
+         var validateName = (rule, value, callback) => {
+            if(value === ''){
+                callback(new Error('请输入用户名'))
+            }else{
+                callback();
+            }
+        };
+         var validatePwd = (rule, value, callback) => {
+            if(value === ''){
+                callback(new Error('请输入密码'))
+            }else{
+                callback();
+            }
+        };
+        
         return{
-            name:'',
-            password:'',
-            checked: false,
+            user:{
+                name:'',
+                password:'',
+                checked: false,
+            },
+            rules:{
+                name:[
+                    {validator: validateName, trigger: 'blur' }
+                ],
+                password:[
+                    {validator: validatePwd, trigger: 'blur' }
+                ],
+                
+            }
+            
         }
     },
     methods:{
-        login(){
-            this.$router.push({path:'/quartz/main'})
+        login(formName){
+            this.$refs[formName].validate((valid) => {
+                var vm = this
+                if (valid) {
+                    vm.$axios({
+                        method:'post',
+                        url:'/quartz/user/login',
+                        data: {
+                            userName: vm.user.name,
+                            password: vm.user.password,
+                        }
+                    }).then(function(response){
+                        if(response.data.code == 200){
+                            vm.$message({
+                                type: 'success',
+                                message: '登录成功'
+                            });
+                            vm.$cookies.set('user', vm.user.name, 60 * 60 * 1);
+                            vm.$router.push({path:'/quartz/main'})
+                        }else{
+                            vm.$message({
+                                type: 'error',
+                                message: '登录失败，账户名或密码错误'
+                            });
+                        }
+                    }).catch(function(error){
+                            vm.$message({
+                                    type: 'error',
+                                    message: '登录失败，账户名或密码错误'
+                            });
+                    })
+                } else {
+                    console.log('error submit!!');
+                }
+            });
         }
     }
     
@@ -55,67 +117,28 @@ export default {
 }
 .login-main{
     height: 300px;
-    display: flex;
-    flex-direction: column;
-}
-.f-name{
-    margin-top: 20px;
-    width: 320px;
-    height: 40px;
     margin-left: 40px;
-    display: flex;
-    justify-content: start;
-    border: 0px;
+}
+.f.el-form-item{
+    width: 320px;
+    margin-top: 10px;
+    height: 40px;
+    border: 1px solid #fff;
+    background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
-    background-color: #ffffff;
 }
-.name{
-    width: 290px;
-    border: none;
-    background-color: #ffffff;
-    outline: none;
-    border-radius: 0 5px 5px 0;
-}
-.el-icon-user{
-    margin-right: 10px;
-    margin-top: 10px;
-    margin-left: 10px;
-}
-.f-password{
-    margin-top: 20px;
-    width: 320px;
-    height: 40px;
-    margin-left: 40px;
-    display: flex;
-    justify-content: start;
-    border: 0px;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(50,50,93,.15), 0 1px 0 rgba(0,0,0,.02);
-    background-color: #ffffff;
-}
-.password{
-    width: 290px;
-    border: none;
-    background-color: #ffffff;
-    outline: none;
-    border-radius: 0 5px 5px 0;
-}
-.pwd.el-icon-key{
-    margin-right: 10px;
-    margin-top: 10px;
-    margin-left: 10px;
+.v>.el-input__inner{
+    border: 0px solid!important;
 }
 .rm{
-    margin-top: 30px;
-    margin-left: 40px;
-    width: 150px;
+    border: 0px solid!important;
+    margin-left: -28px;
 }
 .login-btn{
-    margin-top: 30px;
     width: 80px;
     height: 45px;
-    margin-left: 160px;
+    margin-left: 120px;
     border-radius: 10px;
     background-color: #5e72e4!important;
     font-size: 15px;

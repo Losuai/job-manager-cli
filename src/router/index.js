@@ -52,6 +52,10 @@ export default new Router({
         }
       ]
     },
+    {
+      path:'/quartz/user/profile',
+      component:()=>import('../view/profile.vue')
+    }
 
   ]
 })
