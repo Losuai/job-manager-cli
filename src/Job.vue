@@ -33,7 +33,32 @@ export default {
       'vheader': Header,
       'addJob': addJob,
       'mainTop': mainTop
+    },
+  data(){
+    return{
+
     }
+  },
+  beforeCreate(){
+    var user = this.$cookies.get('user');
+    if(user === null) {
+       this.$message({
+          type: 'error',
+          message: '请登录'
+      });
+      this.$router.push({path:'/quartz/user/login'})
+    }
+  },
+  beforeUpdate(){
+    var user = this.$cookies.get('user');
+    if(user === null) {
+       this.$message({
+          type: 'error',
+          message: '登录过期，请重新登录'
+      });
+      this.$router.push({path:'/quartz/user/login'})
+    }
+  }
 }
 </script>
 

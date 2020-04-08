@@ -8,7 +8,7 @@
             <span style="font-size:13px;margin-left:80px;color:#9eacbb;">Sign in with credentials</span>
             <el-form-item class="f" prop="name">
                 <span slot="label"><i class="el-icon-user" style="margin-left:15px;"></i></span>
-                 <el-input class="v" v-model="user.name" placeholder="Name" ></el-input>
+                <el-input class="v" v-model="user.name" placeholder="Name" ></el-input>
             </el-form-item>
             <el-form-item class="f" prop="password">
                 <span slot="label"><i class="el-icon-key" style="margin-left:15px;"></i></span>

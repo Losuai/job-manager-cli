@@ -34,7 +34,7 @@
             </el-form-item>
             <el-form-item>
                 <el-button class="" type="primary" @click="submitForm('jobForm')">立即创建</el-button>
-                <el-button class="" @click="resetForm('jboForm')">重置</el-button>
+                <el-button class="" @click="resetForm('jobForm')">重置</el-button>
             </el-form-item>
           </el-form>
       </div>
@@ -130,8 +130,8 @@
         });
        
       },
-      resetForm(formName) {
-        this.$refs[formName].resetFields();
+      resetForm(jobForm) {
+        this.$refs[jobForm].resetFields();
       },
      changeCron(val){
         this.cron=val

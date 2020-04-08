@@ -18,6 +18,7 @@
                     background-color="rgba(0,0,0,0)"
                     text-color="#fff"
                     active-text-color="hsla(0,0%,100%,.65)"
+                    @select="handleSelect"
                     >
                     <el-menu-item class="header-menu-item" index="/quartz/main">
                        <i class="el-icon-house"></i>
@@ -63,6 +64,11 @@
 export default {
     data(){
         return{
+        }
+    },
+    methods:{
+        handleSelect(key, keyPath) {
+            console.log(key, keyPath);
         }
     }
 }

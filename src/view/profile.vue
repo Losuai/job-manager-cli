@@ -4,10 +4,10 @@
             <el-header class="pr-header">
                 <el-row>
                     <el-col :span="12"><div class="pr-header-left">
-                         <a href="/quartz/main">
-                             <i class="el-icon-house"></i>
-                             HOME
-                        </a>
+                            <a @click="home">
+                                <i class="el-icon-house"></i>
+                                HOME
+                            </a>
                         </div></el-col>
                     <el-col :span="12">
                         <div class="pr-header-right">
@@ -19,7 +19,7 @@
                                 <el-dropdown-menu slot="dropdown">
                                     <el-dropdown-item command="a">My Profile</el-dropdown-item>
                                     <el-dropdown-item command="b">Change Password</el-dropdown-item>
-                                    <el-dropdown-item command="e" divided>Logout</el-dropdown-item>
+                                    <el-dropdown-item command="c" divided>Logout</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </div>
@@ -30,7 +30,7 @@
                 <div class="pr-main-top">
                     <span class="top-mask"></span>
                     <div class="top-body">
-                        <h1 class="top-title">Hello  {{user.username}}</h1>
+                        <h1 class="top-title-name">Hello  {{user.username}}</h1>
                         <p class="top-content">This is your profile page. You can see the progress you've made with your work and manage your projects or assigned tasks</p>
                     </div>
                 </div>
@@ -123,12 +123,52 @@
                 <el-col :span="12"><div class="grid-content bg-purple pr-footer-left">© 2020 Job Manager & Binar Code</div></el-col>
                 <el-col :span="12"><div class="grid-content bg-purple-light pr-footer-right">About Us</div></el-col>
             </el-footer> 
+            <el-dialog title="修改密码" :visible.sync="centerDialogVisible" width="500px" :close-on-click-modal='false'	:close-on-press-escape	='false'>
+                <el-form  :model="form" :rules="rules" status-icon ref="form">
+                    <el-form-item label="旧密码" :label-width="labelWidth" prop="oldPwd" >
+                        <el-input v-model="form.oldPwd" type="password"></el-input>
+                    </el-form-item>
+                    <el-form-item label="新密码" :label-width="labelWidth" prop="newPwd">
+                        <el-input v-model="form.newPwd"  type="password"></el-input>
+                    </el-form-item>
+                    <el-form-item label="确认新密码" :label-width="labelWidth" prop="confirmPwd">
+                        <el-input v-model="form.confirmPwd"  type="password"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="cancel('form')">放弃修改</el-button>
+                    <el-button type="primary" @click="passwordChange('form')">确认修改</el-button>
+                </div>
+            </el-dialog>
         </el-container>
     </div>
 </template>
 <script>
 export default {
     data(){
+         var validateConfirmPwd = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.form.newPwd) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
+        var validateNewPwd = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入新密码'));
+            }  else {
+                callback();
+            }
+        };
+        var validateOldPwd = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入旧密码'));
+            } else {
+                callback();
+            }
+        };
         return{
             a:'',
             user:{
@@ -142,12 +182,28 @@ export default {
                 aboutMe:'',
                 avatar:'',
             },
+            imageUrl:'',
+            centerDialogVisible:false,
+            labelWidth:'100px',
+            form:{
+                oldPwd:'',
+                newPwd:'',
+                confirmPwd:'',
+            },
             rules:{
                 username:[
                     { required: true, message: '用户名不能为空', trigger: 'blur' }
-                ]
+                ],
+                confirmPwd:[
+                    {validator: validateConfirmPwd, trigger: 'blur'}
+                ],
+                newPwd:[
+                    {validator: validateNewPwd, trigger: 'blur'}
+                ],
+                oldPwd:[
+                    {validator: validateOldPwd, trigger: 'blur'}
+                ],
             },
-            imageUrl:'',
         }
     },
     mounted: function () {
@@ -272,7 +328,63 @@ export default {
         .catch(function (error) {
             console.log(error);
         });
-      }
+      },
+      home(){
+           this.$router.push({path:'/quartz/main'})
+      },
+      handleCommand(command) {
+        if(command === 'a'){
+            this.$router.push({path:'/quartz/user/profile'})
+        }else if(command === 'b'){
+            this.centerDialogVisible = true
+        }else{
+            this.$cookies.remove('user');
+            this.$router.push({path:'/quartz/user/login'})
+        }
+      },
+      passwordChange(formName){
+        var self = this;
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            self.$axios({
+            method: 'post',
+            url: '/quartz/user/pwd',
+            data: {
+                username: self.$cookies.get('user'),
+                oldPwd: self.form.oldPwd,
+                newPwd: self.form.newPwd,
+            }
+            }).then(function(resp){
+                console.log(resp)
+                if(resp.data.code === 200){
+                    self.$message({
+                        type: 'success',
+                        message: resp.data.msg+", 请重新登录!",
+                    });
+                    self.$cookies.remove("user");
+                    self.$router.push({path:"/quartz/user/login"})
+                }else{
+                    self.$message({
+                        type: 'error',
+                        message: resp.data.msg,
+                    });
+                }
+            }).catch(function(err){
+                self.$message({
+                    type: 'error',
+                    message: "error",
+                });
+            })
+          } else {
+            return false;
+          }
+        });
+      },
+      cancel(formName){
+        this.$refs[formName].resetFields();
+        this.centerDialogVisible = false;
+      },
+     
     }
 }
 </script>
@@ -316,7 +428,7 @@ export default {
     opacity: .7!important;
     transition: all .15s ease
 }
-.top-title{
+.top-title-name{
     color: #fff!important;
     font-size: 2.75rem;
     font-weight: 600;
