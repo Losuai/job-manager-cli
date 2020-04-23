@@ -1,7 +1,12 @@
 <template>
     <div class="record-form">
         <el-row class="re-top">
-            <el-col :span="24"><div class="grid-content bg-purple record-top-title"><h3>Record Table</h3></div></el-col>
+            <el-col :span="12"><div class="grid-content bg-purple record-top-title"><h3>Record Table</h3></div></el-col>
+            <el-col :span="12">
+              <div class="grid-content bg-purple record-title-btm">
+                <el-input placeholder="请输入内容" v-model="keyWords" class="record-search" @keyup.enter.native="searchRecord"></el-input>
+              </div>
+            </el-col>
         </el-row>
         <el-table
             class="record-table"
@@ -93,6 +98,7 @@ import moment from "moment"
         },],
         pageSize: 5,
         totalElements: 0,
+        keyWords:"",
       }
     },
     created: function () {
@@ -141,19 +147,29 @@ import moment from "moment"
         },
         handleCurrentChange(val){
         var self = this
-        this.$axios.get('/quartz/record/search?page='+val)
+        this.$axios.get('/quartz/record/search?page='+val+'&keyWords='+self.keyWords)
         .then(function (response) {
           self.QuartzTaskRecords = response.data.data.content
         })
         .catch(function (error) {
           console.log(error);
         });
-      } ,
+        },
+        searchRecord(){
+          var self = this
+          this.$axios.get('/quartz/record/search?page=1&keyWords='+self.keyWords)
+          .then(function (response) {
+            self.QuartzTaskRecords = response.data.data.content
+            self.totalElements = response.data.data.totalElements
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        }
     }
   }
 </script>
-
-<style >
+<style>
 .record-form{
     width: 1200px;
     height: 600px;
@@ -178,5 +194,18 @@ import moment from "moment"
 .el-table__empty-text {
   background-color: #172b4d;
   width: 100%;
+}
+.record-title-btm{
+  width: 100%;
+  line-height: 80px;
+}
+.record-search{
+  margin-left: 250px;
+  width: 300px;
+}
+.record-search>.el-input__inner{
+  border-radius: 20px ;
+  background-color: #172b4d;
+  color: #fff;
 }
 </style>

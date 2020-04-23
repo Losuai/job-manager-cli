@@ -2,11 +2,16 @@
 <div class="job-form">
   <el-row class="nav-top">
     <el-col :span="12"><div class="grid-content bg-purple top-left"><h3>Job Table</h3></div></el-col>
-    <el-col :span="12"><div class="grid-content bg-purple-light top-right"></div></el-col>
+    <el-col :span="12">
+      <div class="grid-content bg-purple-light top-right">
+        <el-input placeholder="请输入内容" v-model="keyWords" class="input-search" @keyup.enter.native="searchJob">
+        </el-input>
+      </div>
+    </el-col>
   </el-row>
   <el-table
     :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
-    style="width: 100%" class="form-table"  empty-text="暂无数据" 
+    style="width: 100%" class="form-table"   
     :header-cell-style="{background:'#f6f9fc',color:'#93a2b2',height:'60px',}">
     <el-table-column
       label="任务编号"
@@ -148,7 +153,7 @@ export default {
         formLabelWidth: '120px',
         cron:'',
         cronPopover:false,
-
+        keyWords:"",
       }
     },
     created: function () {
@@ -290,6 +295,17 @@ export default {
       changeCron(val){
         this.cron=val
       },
+      searchJob(){
+        var self = this
+        this.$axios.get('/quartz/task/find?page=1&keyWords='+self.keyWords)
+        .then(function (response) {
+          self.tableData = response.data.content
+          self.totalElements = response.data.totalElements
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      }
     },
    
   }
@@ -315,7 +331,9 @@ export default {
 }
 .top-right{
   float: right;
-  height: 60px;
+  width: 100%;
+  height: 80px;
+  line-height: 80px;
 }
 .el-button--mini, .el-button--mini.is-round {
     padding: 7px 6px;
@@ -326,4 +344,16 @@ export default {
 background-color: #b8bbbed8 !important;
 }
 
+.input-search{
+  margin-left: 250px;
+  width: 300px;
+ 
+}
+.input-search>.el-input__inner{
+ border-radius: 20px ;
+}
+.el-table.form-table>.el-table__body-wrapper>.el-table__empty-block>.el-table__empty-text {
+  background-color: #fff!important;
+  width: 100%;
+}
 </style>
